@@ -4,7 +4,8 @@ import { Version } from '@microsoft/sp-core-library';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import {
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneSlider
 } from '@microsoft/sp-property-pane';
 
 import * as strings from 'WorldNewsWebPartStrings';
@@ -13,6 +14,8 @@ import { IWorldNewsProps } from './components/IWorldNewsProps';
 
 export interface IWorldNewsWebPartProps {
   description: string;
+  apiURL: string;
+  noOfNews: number;
 }
 
 export default class WorldNewsWebPart extends BaseClientSideWebPart<IWorldNewsWebPartProps> {
@@ -21,7 +24,9 @@ export default class WorldNewsWebPart extends BaseClientSideWebPart<IWorldNewsWe
     const element: React.ReactElement<IWorldNewsProps > = React.createElement(
       WorldNews,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        noOfNews: this.properties.noOfNews,
+        apiURL: this.properties.apiURL
       }
     );
 
@@ -41,7 +46,7 @@ export default class WorldNewsWebPart extends BaseClientSideWebPart<IWorldNewsWe
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: strings.PropertyPaneDescription            
           },
           groups: [
             {
@@ -49,6 +54,17 @@ export default class WorldNewsWebPart extends BaseClientSideWebPart<IWorldNewsWe
               groupFields: [
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
+                }),
+                PropertyPaneTextField('apiURL',{
+                  label: "News API URL"
+                }),
+                PropertyPaneSlider('noOfNews',{
+                  label:"How many to show",
+                  min: 2,
+                  max: 10,
+                  value: 2,
+                  showValue: true,
+                  step: 2
                 })
               ]
             }
