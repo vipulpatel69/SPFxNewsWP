@@ -26,7 +26,8 @@ export default class WorldNewsWebPart extends BaseClientSideWebPart<IWorldNewsWe
       {
         description: this.properties.description,
         noOfNews: this.properties.noOfNews,
-        apiURL: this.properties.apiURL
+        apiURL: this.properties.apiURL,
+        myhttpclient: this.context.httpClient
       }
     );
 

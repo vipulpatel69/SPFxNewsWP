@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "277b7596-35b1-4292-a80b-b9dd8bc24f0c",
+  "id": "277b7596-35b1-4292-a80b-b9dd8bc24f0d",
   "alias": "WorldNewsWebPart",
   "componentType": "WebPart",
 
@@ -17,11 +17,13 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
     "group": { "default": "Other" },
-    "title": { "default": "WorldNews" },
+    "title": { "default": "WorldNewsWebpart" },
     "description": { "default": "WorldNews description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "WorldNews"
+      "description": "World News Webpart",
+      "apiURL": "https://newsapi.org/v2/top-headlines?country=gb&apiKey=44517626d48249e88e0483edbf450fd3"
+      
     }
   }]
 }

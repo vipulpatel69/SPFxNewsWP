@@ -7,6 +7,7 @@ import {
   DocumentCardPreview,
   DocumentCardTitle  
 } from 'office-ui-fabric-react/lib/DocumentCard';
+import { HttpClient, HttpClientResponse, IHttpClientOptions } from '@microsoft/sp-http'; 
 
 export interface ITrendingDocument{
   title: string;
@@ -36,66 +37,87 @@ export default class WorldNews extends React.Component<IWorldNewsProps, IConnect
     };
   }
 
-  private getTrendingNews(_URL: string): void{
-    fetch(
-      _URL,
-      {
-          method: 'GET',
-          credentials: 'same-origin',
-          headers: {
-              'accept': 'application/json'
-          }
-      }
-      ).then(response => {
-          return response.json();
-      }).then(json => {          
-          var trendingDocumentss: ITrendingDocument[] = [];
-          if(json.articles.length>0)
-          {           
-            for(var i=0;i<this.props.noOfNews;i++){
-              trendingDocumentss.push({
-                title: json.articles[i].title,
-                description: json.articles[i].description,
-                url: json.articles[i].url,
-                previewImageUrl: json.articles[i].urlToImage
-              });
-            };         
-            this.setState({trendingDocumentss});
-          }
-      }).catch(e => {
-          console.log(e);
-      });
+  private getTrendingNews(jsonResponse): void{
+    var trendingDocumentss: ITrendingDocument[] = [];
+    if(jsonResponse.articles.length>0)
+    {           
+      for(var i=0;i<this.props.noOfNews;i++){
+        trendingDocumentss.push({
+          title: jsonResponse.articles[i].title,
+          description: jsonResponse.articles[i].description,
+          url: jsonResponse.articles[i].url,
+          previewImageUrl: jsonResponse.articles[i].urlToImage
+        });
+      }         
+      this.setState({trendingDocumentss});
+    }
   }
 
-  public componentDidMount(): void{
-    this.getTrendingNews(this.props.apiURL);
+  public componentDidMount(): void{    
+    this._getthirdpartyApi()  
+    .then(response => {  
+      this.getTrendingNews(response);
+    }).catch(e => {
+        console.log(e);
+    });
   }
 
-  public componentDidUpdate(prevProps: IWorldNewsProps, prevState: IConnectapiState, prevContext: any): void{
-    if (this.props.noOfNews !== prevProps.noOfNews){
-      this.getTrendingNews(this.props.apiURL);
+  private httpClientOptionsForNews: IHttpClientOptions = {
+      headers: new Headers({
+
+      }),
+      method: "GET",
+      mode: "cors"
+  };
+
+  private _getthirdpartyApi(): Promise<any> {  
+    return this.props.myhttpclient  
+    .get(  
+      this.props.apiURL,  
+      HttpClient.configurations.v1,
+      this.httpClientOptionsForNews  
+    )  
+    .then((response: HttpClientResponse) => {  
+      return response.json();  
+    })  
+    .then(jsonResponse => {  
+      console.log(jsonResponse);  
+      return jsonResponse;  
+    }) as Promise<any>;  
+  } 
+
+  public componentDidUpdate(prevProps: IWorldNewsProps, prevState: IConnectapiState, prevContext: any): void{    
+    if (this.props.noOfNews !== prevProps.noOfNews){    
+     this._getthirdpartyApi()  
+     .then(response => {  
+      this.getTrendingNews(response);
+     }).catch(e => {
+        console.log(e);
+    });
     }
   }
 
   public render(): React.ReactElement<IWorldNewsProps> {         
     const newslist: JSX.Element[]= this.state.trendingDocumentss.map((doc:ITrendingDocument)=>{
-    return <DocumentCard onClickHref={doc.url}>
-    <DocumentCardPreview previewImages={[
-          {
-            previewImageSrc: doc.previewImageUrl,
-            width: 318,
-            height: 196,
-            accentColor: '#ce4b1f'
-          }
-        ]} />
-    <DocumentCardTitle title={doc.title} />
-    <DocumentCardTitle title={doc.description} shouldTruncate showAsSecondaryTitle/>    
-  </DocumentCard>
-  })
+    return (        
+            <DocumentCard onClickHref={doc.url}>
+            <DocumentCardPreview previewImages={[
+                  {
+                    previewImageSrc: doc.previewImageUrl,
+                    width: 318,
+                    height: 196,
+                    accentColor: '#ce4b1f'
+                  }
+                ]} />
+            <DocumentCardTitle title={doc.title} />
+            <DocumentCardTitle title={doc.description} shouldTruncate showAsSecondaryTitle/>    
+            </DocumentCard>       
+          );
+  });
   return ( 
-    <div className={ styles.worldNews }>
+    <div className={ styles.worldNews }>      
       { newslist}
-<div style={{clear: 'both'}}/>
+      <div style={{clear: 'both'}}/>
     </div>
   );    
 }

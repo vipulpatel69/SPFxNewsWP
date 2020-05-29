@@ -1,8 +1,8 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "sp-fx-news-client-side-solution",
-    "id": "6d200969-537e-43b1-9cef-737b8eaa1690",
+    "name": "sp-fx-news-webpart",
+    "id": "6d200969-537e-43b1-9cef-737b8eaa1691",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false
